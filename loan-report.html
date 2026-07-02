@@ -1,1 +1,953 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>লোন ও প্রফিট ব্যবস্থাপনা প্যানেল | অ্যাডমিন প্রিমিয়াম</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Hind_Siliguri:wght=400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
 
+    <style>
+        body { font-family: 'Hind Siliguri', sans-serif; background-color: #f8fafc; }
+    </style>
+</head>
+<body class="min-h-screen pb-24">
+
+    <div class="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-950 text-white pb-24 pt-6 px-4 shadow-lg rounded-b-[2.5rem]">
+        <div class="max-w-5xl mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <a href="admin.html" class="w-10 h-10 rounded-xl bg-slate-800/80 hover:bg-slate-700 border border-slate-700 flex items-center justify-center transition">
+                    <i class="fa-solid fa-arrow-left text-slate-300"></i>
+                </a>
+                <div>
+                    <h2 class="text-base font-bold tracking-wide">ঋণ ও কালেকশন মাস্টার হাব</h2>
+                    <p class="text-[10px] text-rose-400">লোন ও আনুপাতিক ইনভেস্টর বন্টন মডিউল</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <main class="max-w-5xl mx-auto px-4 -mt-12">
+        
+        <!-- নেভিগেশন গ্রিড: ৪টি বাটন -->
+        <section class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+            <div onclick="switchSection('issue-section')" id="box-issue" class="bg-white p-4 rounded-2xl border border-slate-100 text-center flex flex-col items-center justify-center cursor-pointer hover:shadow-lg transition group">
+                <div class="w-10 h-10 bg-rose-50 text-rose-600 rounded-xl flex items-center justify-center text-base mb-1.5 group-hover:scale-110 transition">
+                    <i class="fa-solid fa-user-plus"></i>
+                </div>
+                <span class="text-[11px] font-bold text-slate-700 leading-tight">১. লোন বিতরণ</span>
+            </div>
+
+            <div onclick="switchSection('history-section')" id="box-history" class="bg-white p-4 rounded-2xl border-2 border-indigo-500 shadow-md text-center flex flex-col items-center justify-center cursor-pointer hover:shadow-lg transition group">
+                <div class="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center text-base mb-1.5 group-hover:scale-110 transition">
+                    <i class="fa-solid fa-clock-rotate-left"></i>
+                </div>
+                <span class="text-[11px] font-bold text-slate-700 leading-tight">২. লোন হিস্ট্রি</span>
+            </div>
+
+            <div onclick="switchSection('report-section')" id="box-report" class="bg-white p-4 rounded-2xl border border-slate-100 text-center flex flex-col items-center justify-center cursor-pointer hover:shadow-lg transition group">
+                <div class="w-10 h-10 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center text-base mb-1.5 group-hover:scale-110 transition">
+                    <i class="fa-solid fa-file-invoice-dollar"></i>
+                </div>
+                <span class="text-[11px] font-bold text-slate-700 leading-tight">৩. লোন রিপোর্ট</span>
+            </div>
+
+            <div onclick="switchSection('profit-share-section')" id="box-profit-share" class="bg-white p-4 rounded-2xl border border-slate-100 text-center flex flex-col items-center justify-center cursor-pointer hover:shadow-lg transition group">
+                <div class="w-10 h-10 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center text-base mb-1.5 group-hover:scale-110 transition">
+                    <i class="fa-solid fa-chart-line"></i>
+                </div>
+                <span class="text-[11px] font-bold text-slate-700 leading-tight">৪. লাভ বন্টন রিপোর্ট</span>
+            </div>
+        </section>
+
+        <!-- ১. লোন বিতরণ -->
+        <section id="issue-section" class="bg-white p-6 rounded-2xl shadow-md border border-slate-100 space-y-4 hidden">
+            <h3 class="text-xs font-bold text-slate-700 flex items-center gap-1.5 uppercase tracking-wide">
+                <i class="fa-solid fa-file-signature text-rose-500"></i> নতুন ঋণের বিবরণী এন্ট্রি
+            </h3>
+            <form id="loanForm" onsubmit="issueNewLoan(event)" class="space-y-4">
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-500 mb-1">ঋণগ্রহীতার নাম</label>
+                    <input type="text" id="borrowerName" placeholder="গ্রাহকের পুরো নাম লিখুন" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs outline-none focus:border-rose-500 font-medium">
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-[11px] font-bold text-slate-500 mb-1">মোবাইল নাম্বার</label>
+                        <input type="tel" id="borrowerPhone" placeholder="017XXXXXXXX" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs outline-none focus:border-rose-500 font-medium">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold text-slate-500 mb-1">ঠিকানা</label>
+                        <input type="text" id="borrowerAddress" placeholder="গ্রাম, উপজেলা" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs outline-none focus:border-rose-500 font-medium">
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-[11px] font-bold text-slate-500 mb-1">নমিনির নাম</label>
+                        <input type="text" id="nomineeName" placeholder="নমিনির নাম" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs outline-none focus:border-rose-500 font-medium">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold text-slate-500 mb-1">ঋণ প্রদানের তারিখ</label>
+                        <input type="date" id="loanIssueDate" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs outline-none focus:border-rose-500 font-medium">
+                    </div>
+                </div>
+                
+                <div class="bg-indigo-50/50 p-4 rounded-xl border border-indigo-100">
+                    <label class="block text-[11px] font-bold text-indigo-950 mb-2 uppercase tracking-wider">
+                        <i class="fa-solid fa-users text-indigo-600"></i> এই ঋণের বিনিয়োগকারী সদস্য বা অংশীদার সিলেক্ট করুন (টিক দিন):
+                    </label>
+                    <div id="investorListContainer" class="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto p-3 bg-white border border-slate-200 rounded-xl text-xs shadow-inner">
+                        <span class="text-slate-400 p-1 col-span-2 flex items-center gap-1">
+                            <i class="fa-solid fa-spinner animate-spin"></i> সদস্য তালিকা লোড হচ্ছে...
+                        </span>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-[11px] font-bold text-slate-500 mb-1">ঋণের পরিমাণ (আসল)</label>
+                        <input type="number" id="loanAmount" placeholder="যেমন: 50000" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs outline-none focus:border-rose-500 font-bold">
+                    </div>
+                    <div class="w-full">
+                        <label class="block text-[11px] font-bold text-slate-500 mb-1">স্ট্যাটাস</label>
+                        <select id="loanStatus" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs outline-none font-bold text-rose-600">
+                            <option value="active">Active (চলতি লোন)</option>
+                            <option value="cleared">Cleared (পরিশোধিত লোন)</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="submit" id="submitBtn" class="w-full bg-rose-500 hover:bg-rose-600 text-white font-bold py-3 rounded-xl text-xs shadow-md transition">
+                    <i class="fa-solid fa-check-to-slot"></i> সফলভাবে ঋণ ইস্যু করুন
+                </button>
+            </form>
+        </section>
+
+        <!-- ২. লোন হিস্ট্রি ও তালিকা -->
+        <section id="history-section" class="bg-white p-5 rounded-2xl shadow-md border border-slate-100 space-y-4">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                <div class="flex items-center gap-3 w-full sm:w-auto">
+                    <h3 id="sectionTitle" class="text-xs font-bold text-slate-700 flex items-center gap-1.5 uppercase tracking-wide">
+                        <i class="fa-solid fa-clock-rotate-left text-indigo-600"></i> সর্বমোট একটিভ লোন রেকর্ডসমূহ
+                    </h3>
+                    <button id="toggleStatusBtn" onclick="toggleViewMode()" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold text-[10px] px-2.5 py-1.5 rounded-xl transition flex items-center gap-1 shadow-sm">
+                        <i id="toggleIcon" class="fa-solid fa-circle-check text-xs"></i> 
+                        <span id="toggleText">পরিশোধিত লোনসমূহ</span>
+                    </button>
+                </div>
+                <div class="relative w-full sm:w-60">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-400 text-xs"></i>
+                    <input type="text" id="searchLoan" onkeyup="filterLoans()" placeholder="নাম দিয়ে খুঁজুন..." class="w-full pl-8 pr-3 py-1.5 border border-slate-200 rounded-xl text-xs outline-none focus:border-indigo-500 transition">
+                </div>
+            </div>
+            
+            <div class="overflow-x-auto text-xs">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="border-b border-slate-100 text-slate-400 font-semibold bg-slate-50/50">
+                            <th class="py-2.5 px-3">গ্রাহকের বিবরণ</th>
+                            <th class="py-2.5 px-3 text-center">মূল আসল</th>
+                            <th class="py-2.5 px-3 text-center">বাকি আসল</th>
+                            <th class="py-2.5 px-3 text-center">অবস্থা</th>
+                            <th class="py-2.5 px-3 text-right">পদক্ষেপ</th>
+                        </tr>
+                    </thead>
+                    <tbody id="loanTableBody" class="text-slate-600 divide-y divide-slate-50">
+                        <tr><td colspan="5" class="py-6 text-center text-slate-400">মেম্বার ডেটা লোড হচ্ছে...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="flex justify-between items-center pt-4 border-t border-slate-100 text-xs text-slate-500 font-medium">
+                <div id="paginationInfo">রেকর্ড ০ থেকে ০ (মোট ০)</div>
+                <div class="flex items-center gap-2">
+                    <button id="prevBtn" onclick="changePage(-1)" class="bg-slate-100 hover:bg-slate-200 disabled:opacity-50 disabled:hover:bg-slate-100 text-slate-700 font-bold px-3 py-1.5 rounded-xl transition">
+                        <i class="fa-solid fa-angle-left mr-1"></i> আগেরটি
+                    </button>
+                    <button id="nextBtn" onclick="changePage(1)" class="bg-slate-900 hover:bg-black disabled:opacity-40 disabled:hover:bg-slate-900 text-white font-bold px-3 py-1.5 rounded-xl transition">
+                        পরবর্তী <i class="fa-solid fa-angle-right ml-1"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ৩. লোন রিপোর্ট সেন্টার -->
+        <section id="report-section" class="bg-white p-5 rounded-2xl shadow-md border border-slate-100 hidden space-y-5">
+            <h3 class="text-xs font-bold text-slate-700 flex items-center gap-1.5 uppercase tracking-wide">
+                <i class="fa-solid fa-file-invoice-dollar text-emerald-600"></i> Advisory লোন রিপোর্ট ও পিডিএফ ডাউনলোড
+            </h3>
+
+            <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 grid grid-cols-1 sm:grid-cols-4 gap-3 items-end">
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-500 mb-1 uppercase">গ্রাহক সিলেক্ট করুন</label>
+                    <select id="reportCustomerSelect" class="w-full bg-white border border-slate-200 rounded-lg p-2 text-xs font-semibold text-slate-700 outline-none focus:border-emerald-500">
+                        <option value="all">-- সকল কাস্টমার --</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-500 mb-1 uppercase">শুরুর তারিখ (From)</label>
+                    <input type="date" id="reportStartDate" class="w-full bg-white border border-slate-200 rounded-lg p-2 text-xs font-semibold text-slate-700 outline-none focus:border-emerald-500">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-500 mb-1 uppercase">শেষের তারিখ (To)</label>
+                    <input type="date" id="reportEndDate" class="w-full bg-white border border-slate-200 rounded-lg p-2 text-xs font-semibold text-slate-700 outline-none focus:border-emerald-500">
+                </div>
+                <div class="flex gap-1.5">
+                    <button onclick="generateReport()" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 rounded-lg text-xs transition shadow-sm">
+                        <i class="fa-solid fa-magnifying-glass"></i> রিপোর্ট খুঁজুন
+                    </button>
+                    <button onclick="downloadReportPDF()" class="bg-slate-800 hover:bg-slate-900 text-white font-bold py-2 px-3 rounded-lg text-xs transition flex items-center gap-1" title="PDF ডাউনলোড করুন">
+                        <i class="fa-solid fa-file-pdf"></i> PDF
+                    </button>
+                </div>
+            </div>
+
+            <div class="overflow-x-auto text-xs pt-2">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="border-b border-slate-100 text-slate-400 font-semibold bg-slate-50/50">
+                            <th class="py-2.5 px-3">তারিখ</th>
+                            <th class="py-2.5 px-3">গ্রাহকের নাম ও ফোন</th>
+                            <th class="py-2.5 px-3 text-center">মূল আসল</th>
+                            <th class="py-2.5 px-3 text-center">বাকি আসল</th>
+                            <th class="py-2.5 px-3 text-center">অবস্থা</th>
+                        </tr>
+                    </thead>
+                    <tbody id="reportTableBody" class="text-slate-600 divide-y divide-slate-50">
+                        <tr><td colspan="5" class="py-6 text-center text-slate-400">ফিল্টার সিলেক্ট করে "রিপোর্ট খুঁজুন" বাটনে ক্লিক করুন।</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ৪. লাভ বন্টন রিপোর্ট (তারিখ ফিল্টারসহ আপগ্রেডেড) -->
+        <section id="profit-share-section" class="bg-white p-5 rounded-2xl shadow-md border border-slate-100 hidden space-y-4">
+            <h3 class="text-xs font-bold text-slate-700 flex items-center gap-1.5 uppercase tracking-wide">
+                <i class="fa-solid fa-chart-line text-amber-500"></i> মেম্বারভিত্তিক লাভ বন্টন (Profits) হিস্ট্রি লগ
+            </h3>
+
+            <!-- অ্যাডভান্সড ফিল্টার প্যানেল -->
+            <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 grid grid-cols-1 sm:grid-cols-4 gap-3 items-end">
+                <div class="relative sm:col-span-2">
+                    <label class="block text-[10px] font-bold text-slate-500 mb-1 uppercase">নাম দিয়ে খুঁজুন</label>
+                    <div class="relative">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-400 text-xs"></i>
+                        <input type="text" id="searchProfit" onkeyup="filterProfitTable()" placeholder="মেম্বার বা ঋণগ্রহীতার নাম..." class="w-full pl-8 pr-3 py-1.5 border border-slate-200 rounded-lg text-xs outline-none focus:border-amber-500 transition font-medium bg-white">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-500 mb-1 uppercase">শুরুর তারিখ (From)</label>
+                    <input type="date" id="profitStartDate" onchange="filterProfitTable()" class="w-full bg-white border border-slate-200 rounded-lg p-1.5 text-xs font-semibold text-slate-700 outline-none focus:border-amber-500">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-500 mb-1 uppercase">শেষের তারিখ (To)</label>
+                    <input type="date" id="profitEndDate" onchange="filterProfitTable()" class="w-full bg-white border border-slate-200 rounded-lg p-1.5 text-xs font-semibold text-slate-700 outline-none focus:border-amber-500">
+                </div>
+            </div>
+            
+            <div class="overflow-x-auto text-xs">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="border-b border-slate-100 text-slate-400 font-semibold bg-slate-50/50">
+                            <th class="py-2.5 px-3">তারিখ ও সময়</th>
+                            <th class="py-2.5 px-3">অংশীদার/মেম্বার</th>
+                            <th class="py-2.5 px-3">উৎস (ঋণগ্রহীতা)</th>
+                            <th class="py-2.5 px-3 text-right">প্রাপ্ত লভ্যাংশ</th>
+                        </tr>
+                    </thead>
+                    <tbody id="profitTableBody" class="text-slate-600 divide-y divide-slate-50">
+                        <tr><td colspan="4" class="py-6 text-center text-slate-400">লাভ বন্টনের ডেটা লোড হচ্ছে...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <!-- লোন আপডেট ও ডিটেইলস মোডাল -->
+    <div id="detailsModal" class="fixed inset-0 bg-slate-900/60 z-50 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+        <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl border border-slate-100 overflow-hidden transform transition-all">
+            <div class="bg-slate-900 px-4 py-3.5 text-white flex justify-between items-center">
+                <h4 class="text-xs font-bold flex items-center gap-1.5"><i class="fa-solid fa-circle-info text-rose-400"></i> লোন আপডেট ও পরিশোধ কেন্দ্র</h4>
+                <button onclick="closeModal()" class="text-slate-400 hover:text-white transition"><i class="fa-solid fa-xmark text-sm"></i></button>
+            </div>
+            <div class="p-5 space-y-4 text-xs">
+                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 space-y-1">
+                    <div class="font-bold text-slate-800 text-sm" id="modalName">গ্রাহকের নাম</div>
+                    <div class="text-slate-500" id="modalPhone">ফোন: </div>
+                    <div class="text-slate-500" id="modalAddress">ঠিকানা: </div>
+                </div>
+
+                <div class="bg-indigo-50/40 p-3 rounded-xl border border-indigo-100 space-y-2">
+                    <div class="flex justify-between items-center">
+                        <span class="text-[10px] font-bold text-indigo-950 uppercase tracking-wide">
+                            <i class="fa-solid fa-users text-indigo-600"></i> অর্থায়নে নির্দিষ্ট অংশীদারসমূহ:
+                        </span>
+                        <button onclick="toggleInvestorBox()" id="toggleBoxBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-[9px] px-2 py-1 rounded-md transition shadow-sm flex items-center gap-1">
+                            <i id="toggleBoxIcon" class="fa-solid fa-eye"></i> <span id="toggleBoxText">তালিকা দেখুন</span>
+                        </button>
+                    </div>
+                    
+                    <div id="investorWrapperBox" class="hidden transition-all duration-300">
+                        <div id="modalInvestorList" class="max-h-28 overflow-y-auto space-y-1 p-2 bg-white border border-slate-200 rounded-lg text-[11px] font-medium text-slate-700 shadow-inner">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-400 mb-1">মূল লোন এডিট (আসল)</label>
+                        <input type="number" id="modalEditPrincipal" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 font-bold text-slate-800">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-400 mb-1">বাকি আসল এডিট</label>
+                        <input type="number" id="modalEditRemaining" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 font-bold text-rose-600">
+                    </div>
+                </div>
+
+                <div class="border-t border-slate-100 pt-3">
+                    <span class="block text-[10px] font-bold text-emerald-600 mb-2 uppercase tracking-wide">⚡ কিস্তি কালেকশন / পরিশোধ এন্ট্রি করুন:</span>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 mb-1">আসল জমা দিন</label>
+                            <input type="number" id="payPrincipal" placeholder="যেমন: ৫০০" class="w-full border border-slate-200 rounded-lg p-2 font-semibold">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-emerald-600 mb-1">শুধু লাভ জমা দিন</label>
+                            <input type="number" id="payProfit" placeholder="যেমন: ৫০" class="w-full border border-slate-200 rounded-lg p-2 font-semibold text-emerald-600">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2 pt-2">
+                    <button onclick="saveChanges()" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-2.5 rounded-xl transition">
+                        <i class="fa-solid fa-pen-to-square"></i> প্রোফাইল এডিট সেভ
+                    </button>
+                    <button onclick="submitCollection()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-xl transition shadow-sm">
+                        <i class="fa-solid fa-calculator"></i> পেমেন্ট এন্ট্রি করুন
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { db } from "./firebase-config.js";
+        import { collection, addDoc, onSnapshot, doc, updateDoc, runTransaction, getDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        document.getElementById('loanIssueDate').value = new Date().toISOString().slice(0, 10);
+        let selectedLoanId = null;
+        
+        let masterLoansArray = []; 
+        let filteredLoansArray = []; 
+        let activeFilteredReport = [];
+        let globalInvestorsMap = {};
+        let masterProfitsArray = []; 
+
+        let currentViewMode = 'active'; 
+        let currentPage = 1;
+        const rowsPerPage = 10;
+        let cachedUsersNames = {}; 
+
+        const loadApprovedInvestors = () => {
+            const container = document.getElementById('investorListContainer');
+            const usersRef = collection(db, "users");
+            
+            onSnapshot(usersRef, (snapshot) => {
+                container.innerHTML = "";
+                cachedUsersNames = {}; 
+                if(snapshot.empty) {
+                    container.innerHTML = `<span class="text-rose-500 p-2 col-span-2">কোনো সদস্য ডাটাবেজে পাওয়া যায়নি।</span>`;
+                    return;
+                }
+                
+                let hasApprovedMembers = false;
+                snapshot.forEach((userDoc) => {
+                    const userData = userDoc.data();
+                    const userId = userDoc.id;
+                    const userName = userData.name || "অজানা সদস্য";
+                    const userPhone = userData.phone || "";
+                    
+                    cachedUsersNames[userId] = userName; 
+
+                    if (userData.status === "approved" || userData.role === "customer" || !userData.role) {
+                        hasApprovedMembers = true;
+                        container.innerHTML += `
+                            <label class="flex items-center space-x-2 p-2 bg-slate-50 border border-slate-200 rounded-lg hover:bg-indigo-50 cursor-pointer transition select-none">
+                                <input type="checkbox" name="loanInvestors" value="${userId}" class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 w-4 h-4 shrink-0">
+                                <span class="text-slate-800 font-medium truncate">${userName} <span class="text-[9px] text-slate-400 block">${userPhone}</span></span>
+                            </label>
+                        `;
+                    }
+                });
+
+                if(!hasApprovedMembers) {
+                    container.innerHTML = `<span class="text-amber-600 p-2 col-span-2">কোনো একটিভ বা অনুমোদিত গ্রাহক তালিকা পাওয়া যায়নি।</span>`;
+                }
+                
+                renderProfitTable();
+            });
+        };
+        
+        loadApprovedInvestors();
+
+        window.switchSection = (sectionId) => {
+            document.getElementById('issue-section').classList.add('hidden');
+            document.getElementById('history-section').classList.add('hidden');
+            document.getElementById('report-section').classList.add('hidden');
+            document.getElementById('profit-share-section').classList.add('hidden');
+            
+            document.getElementById('box-issue').classList.remove('border-2', 'border-rose-500', 'shadow-md');
+            document.getElementById('box-history').classList.remove('border-2', 'border-indigo-500', 'shadow-md');
+            document.getElementById('box-report').classList.remove('border-2', 'border-emerald-500', 'shadow-md');
+            document.getElementById('box-profit-share').classList.remove('border-2', 'border-amber-500', 'shadow-md');
+            
+            document.getElementById(sectionId).classList.remove('hidden');
+            
+            if(sectionId === 'issue-section') {
+                document.getElementById('box-issue').classList.add('border-2', 'border-rose-500', 'shadow-md');
+            } else if(sectionId === 'history-section') {
+                document.getElementById('box-history').classList.add('border-2', 'border-indigo-500', 'shadow-md');
+            } else if(sectionId === 'report-section') {
+                document.getElementById('box-report').classList.add('border-2', 'border-emerald-500', 'shadow-md');
+            } else {
+                document.getElementById('box-profit-share').classList.add('border-2', 'border-amber-500', 'shadow-md');
+            }
+        };
+
+        const profitQuery = query(collection(db, "profits"), orderBy("date", "desc"));
+        onSnapshot(profitQuery, (snapshot) => {
+            masterProfitsArray = [];
+            snapshot.forEach((pDoc) => {
+                const data = pDoc.data();
+                masterProfitsArray.push({
+                    id: pDoc.id,
+                    userId: data.userId || "",
+                    amount: parseFloat(data.amount || 0),
+                    borrowerName: data.borrowerName || "অজানা",
+                    date: data.date ? data.date.toDate() : new Date()
+                });
+            });
+            renderProfitTable();
+        });
+
+        // লাভ বন্টন রিপোর্ট: নাম + ফ্রম/টু ডেট ফিল্টার লজিক
+        const renderProfitTable = () => {
+            const tbody = document.getElementById('profitTableBody');
+            if(!tbody) return;
+            tbody.innerHTML = "";
+
+            const searchInput = document.getElementById('searchProfit').value.toUpperCase().trim();
+            const startDateVal = document.getElementById('profitStartDate').value; // YYYY-MM-DD
+            const endDateVal = document.getElementById('profitEndDate').value;     // YYYY-MM-DD
+
+            let filtered = [...masterProfitsArray];
+
+            // ১. টেক্সট সার্চ ফিল্টার (মেম্বার বা গ্রাহকের নাম)
+            if (searchInput !== "") {
+                filtered = filtered.filter(p => {
+                    const mName = (cachedUsersNames[p.userId] || "অজানা মেম্বার").toUpperCase();
+                    return mName.includes(searchInput) || p.borrowerName.toUpperCase().includes(searchInput);
+                });
+            }
+
+            // ২. ডেট রেঞ্জ ফিল্টার (ফ্রম ডেট - টু ডেট)
+            if (startDateVal || endDateVal) {
+                filtered = filtered.filter(p => {
+                    // Firestore Date অবজেক্ট থেকে YYYY-MM-DD ফরম্যাট তৈরি
+                    const pDateStr = p.date.toISOString().slice(0, 10);
+                    
+                    if (startDateVal && endDateVal) {
+                        return pDateStr >= startDateVal && pDateStr <= endDateVal;
+                    } else if (startDateVal) {
+                        return pDateStr >= startDateVal;
+                    } else if (endDateVal) {
+                        return pDateStr <= endDateVal;
+                    }
+                    return true;
+                });
+            }
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" class="py-6 text-center text-slate-400">ফিল্টার অনুযায়ী কোনো লাভ বন্টনের রেকর্ড পাওয়া যায়নি।</td></tr>`;
+                return;
+            }
+
+            filtered.forEach((p) => {
+                const memberName = cachedUsersNames[p.userId] || "অজানা মেম্বার";
+                const formattedDate = p.date.toLocaleString('bn-BD', { hour12:true });
+                tbody.innerHTML += `
+                    <tr class="border-b border-slate-50 hover:bg-slate-50 transition">
+                        <td class="py-2.5 px-3 text-slate-500 text-[11px]">${formattedDate}</td>
+                        <td class="py-2.5 px-3 font-bold text-slate-800">${memberName}</td>
+                        <td class="py-2.5 px-3 text-slate-600 font-medium"><span class="text-[10px] bg-indigo-50 text-indigo-600 px-1.5 py-0.5 rounded mr-1">লোন</span>${p.borrowerName}</td>
+                        <td class="py-2.5 px-3 text-right font-bold text-emerald-600">+ ৳${p.amount.toFixed(2)}</td>
+                    </tr>
+                `;
+            });
+        };
+
+        window.filterProfitTable = () => {
+            renderProfitTable();
+        };
+
+        window.issueNewLoan = async (event) => {
+            event.preventDefault();
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.innerText = "প্রসেসিং হচ্ছে...";
+            const bName = document.getElementById('borrowerName').value.trim();
+            const pAmount = parseFloat(document.getElementById('loanAmount').value);
+            const lStatus = document.getElementById('loanStatus').value;
+
+            const checkedBoxes = document.querySelectorAll('input[name="loanInvestors"]:checked');
+            const selectedInvestorIds = Array.from(checkedBoxes).map(cb => cb.value);
+
+            if(selectedInvestorIds.length === 0) {
+                alert("দয়া করে এই ঋণের জন্য অন্তত ১ জন বিনিয়োগকারী সদস্য সিলেক্ট করুন!");
+                submitBtn.disabled = false;
+                submitBtn.innerText = "সফলভাবে ঋণ ইস্যু করুন";
+                return;
+            }
+
+            try {
+                await addDoc(collection(db, "loans"), {
+                    userName: bName,
+                    memberName: bName,
+                    phone: document.getElementById('borrowerPhone').value.trim(),
+                    address: document.getElementById('borrowerAddress').value.trim(),
+                    nomineeName: document.getElementById('nomineeName').value.trim(),
+                    principalAmount: pAmount,
+                    remainingAmount: lStatus === "cleared" ? 0 : pAmount,
+                    date: document.getElementById('loanIssueDate').value,
+                    status: lStatus,
+                    investorIds: selectedInvestorIds, 
+                    createdAt: new Date()
+                });
+                alert("সাফল্যের সাথে ঋণ এবং নির্দিষ্ট বিনিয়োগকারী রেকর্ড সাবমিট হয়েছে!");
+                document.getElementById('loanForm').reset();
+                document.getElementById('loanIssueDate').value = new Date().toISOString().slice(0, 10);
+            } catch (err) {
+                alert("ত্রুটি: " + err.message);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerText = "সফলভাবে ঋণ ইস্যু করুন";
+            }
+        };
+
+        onSnapshot(collection(db, "loans"), (snapshot) => {
+            masterLoansArray = [];
+            globalInvestorsMap = {};
+            
+            const dropdown = document.getElementById('reportCustomerSelect');
+            dropdown.innerHTML = `<option value="all">-- সকল কাস্টমার --</option>`;
+            const uniqueNames = new Set();
+
+            snapshot.forEach((loanDoc) => {
+                const loan = loanDoc.data();
+                const id = loanDoc.id;
+                const name = loan.userName || loan.memberName || "অজানা";
+                const pAmt = parseFloat(loan.principalAmount || 0);
+                const rAmt = parseFloat(loan.remainingAmount !== undefined ? loan.remainingAmount : pAmt);
+                const phone = loan.phone || 'N/A';
+                const loanDate = loan.date || '';
+
+                globalInvestorsMap[id] = loan.investorIds || [];
+
+                masterLoansArray.push({
+                    id: id,
+                    name: name, 
+                    phone: phone, 
+                    address: loan.address || '',
+                    principalAmount: pAmt, 
+                    remainingAmount: rAmt,
+                    date: loanDate, 
+                    status: loan.status || 'active',
+                    investorIds: loan.investorIds || []
+                });
+
+                if(!uniqueNames.has(name)) {
+                    uniqueNames.add(name);
+                    dropdown.innerHTML += `<option value="${name}">${name}</option>`;
+                }
+            });
+
+            applyViewFilters();
+        });
+
+        window.toggleViewMode = () => {
+            if (currentViewMode === 'active') {
+                currentViewMode = 'cleared';
+            } else {
+                currentViewMode = 'active';
+            }
+            currentPage = 1; 
+            applyViewFilters();
+        };
+
+        const applyViewFilters = () => {
+            const titleEl = document.getElementById('sectionTitle');
+            const btnTextEl = document.getElementById('toggleText');
+            const btnIconEl = document.getElementById('toggleIcon');
+            const btnEl = document.getElementById('toggleStatusBtn');
+            const searchInput = document.getElementById('searchLoan').value.toUpperCase().trim();
+
+            let baseFiltered = masterLoansArray.filter(loan => loan.status === currentViewMode);
+
+            if (searchInput !== "") {
+                baseFiltered = baseFiltered.filter(loan => 
+                    loan.name.toUpperCase().includes(searchInput) || loan.phone.includes(searchInput)
+                );
+            }
+
+            filteredLoansArray = baseFiltered;
+
+            if (currentViewMode === 'active') {
+                titleEl.innerHTML = `<i class="fa-solid fa-clock-rotate-left text-indigo-600"></i> সর্বমোট একটিভ লোন রেকর্ডসমূহ`;
+                btnTextEl.innerText = "পরিশোধিত লোনসমূহ";
+                btnIconEl.className = "fa-solid fa-circle-check text-xs";
+                btnEl.className = "bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold text-[10px] px-2.5 py-1.5 rounded-xl transition flex items-center gap-1 shadow-sm";
+            } else {
+                titleEl.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-600"></i> সর্বমোট পরিশোধিত লোন রেকর্ডসমূহ`;
+                btnTextEl.innerText = "চলতি (Active) লোনসমূহ";
+                btnIconEl.className = "fa-solid fa-clock-rotate-left text-xs";
+                btnEl.className = "bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold text-[10px] px-2.5 py-1.5 rounded-xl transition flex items-center gap-1 shadow-sm";
+            }
+
+            renderLoanTable();
+        };
+
+        const renderLoanTable = () => {
+            const tbody = document.getElementById('loanTableBody');
+            tbody.innerHTML = "";
+
+            if (filteredLoansArray.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="py-6 text-center text-slate-400">কোনো হিস্ট্রি রেকর্ড পাওয়া যায়নি।</td></tr>`;
+                document.getElementById('paginationInfo').innerText = "রেকর্ড ০ থেকে ০ (মোট ০)";
+                document.getElementById('prevBtn').disabled = true;
+                document.getElementById('nextBtn').disabled = true;
+                return;
+            }
+
+            const startIndex = (currentPage - 1) * rowsPerPage;
+            const endIndex = Math.min(startIndex + rowsPerPage, filteredLoansArray.length);
+            const paginatedItems = filteredLoansArray.slice(startIndex, endIndex);
+
+            paginatedItems.forEach((loan) => {
+                let statusBadge = loan.status === 'active' 
+                    ? `<span class="bg-rose-50 text-rose-600 px-2 py-0.5 rounded-full text-[10px] font-bold">Active</span>`
+                    : `<span class="bg-emerald-50 text-emerald-600 px-2 py-0.5 rounded-full text-[10px] font-bold">Cleared</span>`;
+
+                tbody.innerHTML += `
+                    <tr class="loan-item border-b border-slate-50 hover:bg-slate-50 transition">
+                        <td class="py-3 px-3">
+                            <div class="font-bold text-slate-800 name-field">${loan.name}</div>
+                            <div class="text-[10px] text-slate-400"><i class="fa-solid fa-phone text-[9px]"></i> ${loan.phone}</div>
+                        </td>
+                        <td class="py-3 px-3 text-center font-medium text-slate-500">৳${loan.principalAmount.toFixed(0)}</td>
+                        <td class="py-3 px-3 text-center font-bold text-rose-600">৳${loan.remainingAmount.toFixed(0)}</td>
+                        <td class="py-3 px-3 text-center">${statusBadge}</td>
+                        <td class="py-3 px-3 text-right">
+                            <button onclick="openModal('${loan.id}', '${loan.name.replace(/'/g, "\\'")}', '${loan.phone.replace(/'/g, "\\'")}', '${loan.address.replace(/'/g, "\\'")}', ${loan.principalAmount}, ${loan.remainingAmount})" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-[10px] px-2.5 py-1 rounded-md transition shadow-sm">
+                                ভিউ / ডিটেইলস
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            document.getElementById('paginationInfo').innerText = `রেকর্ড ${startIndex + 1} থেকে ${endIndex} (মোট ${filteredLoansArray.length})`;
+            document.getElementById('prevBtn').disabled = (currentPage === 1);
+            document.getElementById('nextBtn').disabled = (endIndex >= filteredLoansArray.length);
+        };
+
+        window.changePage = (direction) => {
+            currentPage += direction;
+            renderLoanTable();
+        };
+
+        window.filterLoans = () => {
+            currentPage = 1; 
+            applyViewFilters();
+        };
+
+        window.generateReport = () => {
+            const customerSelect = document.getElementById('reportCustomerSelect').value;
+            const startD = document.getElementById('reportStartDate').value;
+            const endD = document.getElementById('reportEndDate').value;
+
+            let result = [...masterLoansArray];
+
+            if(customerSelect !== "all") {
+                result = result.filter(loan => loan.name === customerSelect);
+            }
+
+            if(startD && endD) {
+                result = result.filter(loan => loan.date >= startD && loan.date <= endD);
+            } else if(startD || endD) {
+                alert("তারিখ ফিল্টার করতে শুরুর তারিখ ও শেষের তারিখ দুটোই সিলেক্ট করুন!");
+                return;
+            }
+
+            activeFilteredReport = result;
+
+            const rBody = document.getElementById('reportTableBody');
+            rBody.innerHTML = "";
+
+            if(result.length === 0) {
+                rBody.innerHTML = `<tr><td colspan="5" class="py-6 text-center text-slate-400">ফিল্টার অনুযায়ী কোনো লোন রেকর্ড পাওয়া যায়নি।</td></tr>`;
+                return;
+            }
+
+            result.forEach(loan => {
+                let statusText = loan.status === 'active' ? 'Active' : 'Cleared';
+                let statusClass = loan.status === 'active' ? 'text-rose-600 font-bold' : 'text-emerald-600 font-bold';
+                
+                rBody.innerHTML += `
+                    <tr class="border-b border-slate-50 hover:bg-slate-50 transition">
+                        <td class="py-3 px-3 text-slate-500 font-medium">${loan.date || 'N/A'}</td>
+                        <td class="py-3 px-3">
+                            <div class="font-bold text-slate-800">${loan.name}</div>
+                            <div class="text-[10px] text-slate-400">${loan.phone}</div>
+                        </td>
+                        <td class="py-3 px-3 text-center text-slate-600">৳${loan.principalAmount.toFixed(0)}</td>
+                        <td class="py-3 px-3 text-center text-rose-600 font-medium">৳${loan.remainingAmount.toFixed(0)}</td>
+                        <td class="py-3 px-3 text-center"><span class="${statusClass}">${statusText}</span></td>
+                    </tr>
+                `;
+            });
+        };
+
+        window.downloadReportPDF = () => {
+            if(!activeFilteredReport || activeFilteredReport.length === 0) {
+                alert("প্রথমে ফিল্টার সিলেক্ট করে 'রিপোর্ট খুঁজুন' ক্লিক করুন, তারপর ডাউনলোড করুন!");
+                return;
+            }
+            
+            try {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+                
+                const cust = document.getElementById('reportCustomerSelect').value;
+                const sDate = document.getElementById('reportStartDate').value || "All";
+                const eDate = document.getElementById('reportEndDate').value || "All";
+
+                doc.setFont("Helvetica", "bold");
+                doc.setFontSize(14);
+                doc.text("Loan Statement & Ledger Report", 14, 18);
+                
+                doc.setFontSize(9);
+                doc.setFont("Helvetica", "normal");
+                doc.text(`Customer Selection: ${cust.toUpperCase()}`, 14, 25);
+                doc.text(`Duration: From [ ${sDate} ] To [ ${eDate} ]`, 14, 30);
+                doc.text(`Report Download Time: ${new Date().toLocaleString()}`, 14, 35);
+                
+                const tableDataRows = [];
+                activeFilteredReport.forEach((loan, index) => {
+                    tableDataRows.push([
+                        index + 1,
+                        loan.date || 'N/A',
+                        loan.name || 'Unknown',
+                        loan.phone || 'N/A',
+                        `BDT ${parseFloat(loan.principalAmount || 0).toFixed(0)}`,
+                        `BDT ${parseFloat(loan.remainingAmount || 0).toFixed(0)}`,
+                        String(loan.status || 'active').toUpperCase()
+                    ]);
+                });
+                
+                doc.autoTable({
+                    startY: 40,
+                    head: [['SL', 'Issue Date', 'Borrower Name', 'Phone No', 'Principal Amt', 'Remaining Amt', 'Status']],
+                    body: tableDataRows,
+                    theme: 'striped',
+                    headStyles: { fillColor: [15, 23, 42] }, 
+                    styles: { fontSize: 8.5 }
+                });
+                
+                doc.save(`Loan_Statement_${new Date().toISOString().slice(0, 10)}.pdf`);
+            } catch (error) {
+                console.error("PDF Generation Error:", error);
+                alert("PDF তৈরি করতে সমস্যা হয়েছে: " + error.message);
+            }
+        };
+
+        window.toggleInvestorBox = () => {
+            const box = document.getElementById('investorWrapperBox');
+            const btnText = document.getElementById('toggleBoxText');
+            const btnIcon = document.getElementById('toggleBoxIcon');
+
+            if (box.classList.contains('hidden')) {
+                box.classList.remove('hidden');
+                btnText.innerText = "তালিকা লুকান";
+                btnIcon.className = "fa-solid fa-eye-slash";
+            } else {
+                box.classList.add('hidden');
+                btnText.innerText = "তালিকা দেখুন";
+                btnIcon.className = "fa-solid fa-eye";
+            }
+        };
+
+        window.openModal = async (id, name, phone, address, pAmt, rAmt) => {
+            selectedLoanId = id;
+            document.getElementById('modalName').innerText = name;
+            document.getElementById('modalPhone').innerText = "ফোন: " + phone;
+            document.getElementById('modalAddress').innerText = "ঠিকানা: " + address;
+            document.getElementById('modalEditPrincipal').value = pAmt;
+            document.getElementById('modalEditRemaining').value = rAmt;
+                        
+            document.getElementById('payPrincipal').value = "";
+            document.getElementById('payProfit').value = "";
+            
+            document.getElementById('investorWrapperBox').classList.add('hidden');
+            document.getElementById('toggleBoxText').innerText = "তালিকা দেখুন";
+            document.getElementById('toggleBoxIcon').className = "fa-solid fa-eye";
+
+            const listContainer = document.getElementById('modalInvestorList');
+            listContainer.innerHTML = `<span class="text-slate-400 italic flex items-center gap-1"><i class="fa-solid fa-spinner animate-spin"></i> অংশীদার খোঁজা হচ্ছে...</span>`;
+
+            document.getElementById('detailsModal').classList.remove('hidden');
+
+            const investorIds = globalInvestorsMap[id] || [];
+            
+            if (investorIds.length === 0) {
+                listContainer.innerHTML = `<span class="text-rose-500">কোনো নির্দিষ্ট অংশীদার যুক্ত নেই।</span>`;
+                return;
+            }
+
+            try {
+                let investorHtml = "";
+                for (let invId of investorIds) {
+                    const userRef = doc(db, "users", invId);
+                    const userSnap = await getDoc(userRef);
+                    if (userSnap.exists()) {
+                        const uData = userSnap.data();
+                        investorHtml += `
+                            <div class="flex items-center justify-between p-1.5 bg-slate-50 border border-slate-100 rounded-md">
+                                <span class="text-slate-800 font-bold"><i class="fa-solid fa-user text-indigo-500 text-[10px] mr-1"></i>${uData.name || "অজানা"}</span>
+                                <span class="text-slate-400 text-[10px]">${uData.phone || ""}</span>
+                            </div>
+                        `;
+                    }
+                }
+                listContainer.innerHTML = investorHtml || `<span class="text-amber-500">অংশীদারদের প্রোফাইল পাওয়া যায়নি।</span>`;
+            } catch (err) {
+                listContainer.innerHTML = `<span class="text-rose-500">লোড করতে ত্রুটি হয়েছে।</span>`;
+            }
+        };
+
+        window.closeModal = () => { document.getElementById('detailsModal').classList.add('hidden'); };
+
+        window.saveChanges = async () => {
+            if(!selectedLoanId) return;
+            const newP = parseFloat(document.getElementById('modalEditPrincipal').value || 0);
+            const newR = parseFloat(document.getElementById('modalEditRemaining').value || 0);
+            const newStatus = newR <= 0 ? "cleared" : "active";
+            try {
+                await updateDoc(doc(db, "loans", selectedLoanId), {
+                    principalAmount: newP,
+                    remainingAmount: newR,
+                    status: newStatus
+                });
+                alert("রেকوردটি সফলভাবে সংশোধন/ইডিট করা হয়েছে!");
+                closeModal();
+            } catch (err) { alert("ভুল সংশোধনে সমস্যা: " + err.message); }
+        };
+
+        window.submitCollection = async () => {
+            if(!selectedLoanId) return;
+            const payP = parseFloat(document.getElementById('payPrincipal').value || 0);
+            const payProfit = parseFloat(document.getElementById('payProfit').value || 0);
+            
+            if(payP <= 0 && payProfit <= 0) { alert("আসল বা লাভের ঘরে সঠিক এন্ট্রি দিন!"); return; }
+            
+            try {
+                await runTransaction(db, async (transaction) => {
+                    const loanRef = doc(db, "loans", selectedLoanId);
+                    const settingsRef = doc(db, "settings", "profitConfig");
+                    
+                    const loanSnap = await transaction.get(loanRef);
+                    const settingsSnap = await transaction.get(settingsRef);
+                    
+                    if (!loanSnap.exists()) {
+                        throw new Error("গ্রাহকের লোন রেকর্ডটি ডাটাবেজে পাওয়া যায়নি।");
+                    }
+                    
+                    const loanData = loanSnap.data();
+                    const currentR = parseFloat(loanData.remainingAmount !== undefined ? loanData.remainingAmount : loanData.principalAmount);
+                    const investorIds = loanData.investorIds || []; 
+
+                    const investorSnaps = [];
+                    let totalInvestorsCapital = 0; 
+
+                    if (investorIds.length > 0) {
+                        for (let investorId of investorIds) {
+                            const investorRef = doc(db, "users", investorId);
+                            const investorSnap = await transaction.get(investorRef);
+                            
+                            if (investorSnap.exists()) {
+                                const invData = investorSnap.data();
+                                totalInvestorsCapital += parseFloat(invData.totalDeposit || 0);
+                                investorSnaps.push({ ref: investorRef, snap: investorSnap });
+                            }
+                        }
+                    }
+
+                    let currentProfit = 0;
+                    if(settingsSnap.exists()) {
+                        currentProfit = parseFloat(settingsSnap.data().totalProfitAmount || 0);
+                    }
+                    
+                    if(payP > currentR) { 
+                        throw new Error(`বাকি আসলের চেয়ে পরিশোধের আসল বেশি হতে পারে না! সর্বোচ্চ বাকি আছে: ৳${currentR}`); 
+                    }
+                    
+                    const finalRemaining = currentR - payP;
+                    const finalProfit = currentProfit + payProfit;
+                    
+                    transaction.update(loanRef, {
+                        remainingAmount: finalRemaining,
+                        status: finalRemaining <= 0 ? "cleared" : "active"
+                    });
+                    
+                    transaction.set(settingsRef, { 
+                        totalProfitAmount: finalProfit 
+                    }, { merge: true });
+
+                    if (payProfit > 0 && investorSnaps.length > 0 && totalInvestorsCapital > 0) {
+                        const profitsCollectionRef = collection(db, "profits");
+                        
+                        for (let item of investorSnaps) {
+                            const investorData = item.snap.data();
+                            const myDeposit = parseFloat(investorData.totalDeposit || 0); 
+                            const currentInvestorProfit = parseFloat(investorData.totalProfitShare || 0); 
+                            
+                            const myProfitShare = (myDeposit / totalInvestorsCapital) * payProfit;
+                            
+                            transaction.update(item.ref, {
+                                totalProfitShare: currentInvestorProfit + myProfitShare
+                            });
+
+                            const newProfitDocRef = doc(profitsCollectionRef);
+                            transaction.set(newProfitDocRef, {
+                                userId: item.ref.id,
+                                amount: myProfitShare,
+                                loanId: selectedLoanId,
+                                borrowerName: loanData.userName || loanData.memberName || "অজানা",
+                                date: new Date()
+                            });
+                        }
+                    }
+                });
+                
+                alert("কালেকশন এন্ট্রি সম্পূর্ণ হয়েছে এবং অংশীদারদের ব্যালেন্সে টাকা পৌঁছে গেছে!");
+                closeModal();
+                
+            } catch (err) { 
+                console.error("Firestore Transaction Error:", err);
+                alert("কালেকশন এন্ট্রি ব্যর্থ হয়েছে: " + err.message); 
+            }
+        };
+    </script>
+</body>
+  </html>
