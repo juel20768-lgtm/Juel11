@@ -1,7 +1,7 @@
 {
   "name": "সঞ্চয় ও ঋণ সমিতি",
-  "short_name": "সমিতি অ্যাপ",
-  "description": "মোঃ নয়ন সরকার পরিচালিত প্রিমিয়াম সঞ্চয় ও ঋণ সমিতি অ্যাপ্লিকেশন",
+  "short_name": "এডমিন ",
+  "description": "মোঃ জুয়েল হোসাইন পরিচালিত প্রিমিয়াম সঞ্চয় ও ঋণ সমিতি অ্যাপ্লিকেশন",
   "start_url": "index.html",
   "display": "standalone",
   "background_color": "#f8fafc",
