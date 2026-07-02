@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>লোন ব্যবস্থাপনা প্যানেল | অ্যাডমিন প্রিমিয়াম</title>
+    <title>লোন ও প্রফিট ব্যবস্থাপনা প্যানেল | অ্যাডমিন প্রিমিয়াম</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Hind_Siliguri:wght=400;500;600;700&display=swap" rel="stylesheet">
@@ -33,7 +33,8 @@
 
     <main class="max-w-5xl mx-auto px-4 -mt-12">
         
-        <section class="grid grid-cols-3 gap-3 mb-6">
+        <!-- নেভিগেশন গ্রিড: ৪টি বাটন -->
+        <section class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
             <div onclick="switchSection('issue-section')" id="box-issue" class="bg-white p-4 rounded-2xl border border-slate-100 text-center flex flex-col items-center justify-center cursor-pointer hover:shadow-lg transition group">
                 <div class="w-10 h-10 bg-rose-50 text-rose-600 rounded-xl flex items-center justify-center text-base mb-1.5 group-hover:scale-110 transition">
                     <i class="fa-solid fa-user-plus"></i>
@@ -45,17 +46,25 @@
                 <div class="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center text-base mb-1.5 group-hover:scale-110 transition">
                     <i class="fa-solid fa-clock-rotate-left"></i>
                 </div>
-                <span class="text-[11px] font-bold text-slate-700 leading-tight">২. লোন হিস্ট্রি ও তালিকা</span>
+                <span class="text-[11px] font-bold text-slate-700 leading-tight">২. লোন হিস্ট্রি</span>
             </div>
 
             <div onclick="switchSection('report-section')" id="box-report" class="bg-white p-4 rounded-2xl border border-slate-100 text-center flex flex-col items-center justify-center cursor-pointer hover:shadow-lg transition group">
                 <div class="w-10 h-10 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center text-base mb-1.5 group-hover:scale-110 transition">
                     <i class="fa-solid fa-file-invoice-dollar"></i>
                 </div>
-                <span class="text-[11px] font-bold text-slate-700 leading-tight">৩. লোন রিপোর্ট সেন্টার</span>
+                <span class="text-[11px] font-bold text-slate-700 leading-tight">৩. লোন রিপোর্ট</span>
+            </div>
+
+            <div onclick="switchSection('profit-share-section')" id="box-profit-share" class="bg-white p-4 rounded-2xl border border-slate-100 text-center flex flex-col items-center justify-center cursor-pointer hover:shadow-lg transition group">
+                <div class="w-10 h-10 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center text-base mb-1.5 group-hover:scale-110 transition">
+                    <i class="fa-solid fa-chart-line"></i>
+                </div>
+                <span class="text-[11px] font-bold text-slate-700 leading-tight">৪. লাভ বন্টন রিপোর্ট</span>
             </div>
         </section>
 
+        <!-- ১. লোন বিতরণ -->
         <section id="issue-section" class="bg-white p-6 rounded-2xl shadow-md border border-slate-100 space-y-4 hidden">
             <h3 class="text-xs font-bold text-slate-700 flex items-center gap-1.5 uppercase tracking-wide">
                 <i class="fa-solid fa-file-signature text-rose-500"></i> নতুন ঋণের বিবরণী এন্ট্রি
@@ -164,6 +173,7 @@
             </div>
         </section>
 
+        <!-- ৩. লোন রিপোর্ট সেন্টার -->
         <section id="report-section" class="bg-white p-5 rounded-2xl shadow-md border border-slate-100 hidden space-y-5">
             <h3 class="text-xs font-bold text-slate-700 flex items-center gap-1.5 uppercase tracking-wide">
                 <i class="fa-solid fa-file-invoice-dollar text-emerald-600"></i> Advisory লোন রিপোর্ট ও পিডিএফ ডাউনলোড
@@ -177,7 +187,7 @@
                     </select>
                 </div>
                 <div>
-                    <label class="block text-[10px] font-bold text-slate-500 mb-1 uppercase">শрующих তারিখ (From)</label>
+                    <label class="block text-[10px] font-bold text-slate-500 mb-1 uppercase">শুরুর তারিখ (From)</label>
                     <input type="date" id="reportStartDate" class="w-full bg-white border border-slate-200 rounded-lg p-2 text-xs font-semibold text-slate-700 outline-none focus:border-emerald-500">
                 </div>
                 <div>
@@ -211,6 +221,48 @@
                 </table>
             </div>
         </section>
+
+        <!-- ৪. লাভ বন্টন রিপোর্ট (তারিখ ফিল্টারসহ আপগ্রেডেড) -->
+        <section id="profit-share-section" class="bg-white p-5 rounded-2xl shadow-md border border-slate-100 hidden space-y-4">
+            <h3 class="text-xs font-bold text-slate-700 flex items-center gap-1.5 uppercase tracking-wide">
+                <i class="fa-solid fa-chart-line text-amber-500"></i> মেম্বারভিত্তিক লাভ বন্টন (Profits) হিস্ট্রি লগ
+            </h3>
+
+            <!-- অ্যাডভান্সড ফিল্টার প্যানেল -->
+            <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 grid grid-cols-1 sm:grid-cols-4 gap-3 items-end">
+                <div class="relative sm:col-span-2">
+                    <label class="block text-[10px] font-bold text-slate-500 mb-1 uppercase">নাম দিয়ে খুঁজুন</label>
+                    <div class="relative">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-400 text-xs"></i>
+                        <input type="text" id="searchProfit" onkeyup="filterProfitTable()" placeholder="মেম্বার বা ঋণগ্রহীতার নাম..." class="w-full pl-8 pr-3 py-1.5 border border-slate-200 rounded-lg text-xs outline-none focus:border-amber-500 transition font-medium bg-white">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-500 mb-1 uppercase">শুরুর তারিখ (From)</label>
+                    <input type="date" id="profitStartDate" onchange="filterProfitTable()" class="w-full bg-white border border-slate-200 rounded-lg p-1.5 text-xs font-semibold text-slate-700 outline-none focus:border-amber-500">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-500 mb-1 uppercase">শেষের তারিখ (To)</label>
+                    <input type="date" id="profitEndDate" onchange="filterProfitTable()" class="w-full bg-white border border-slate-200 rounded-lg p-1.5 text-xs font-semibold text-slate-700 outline-none focus:border-amber-500">
+                </div>
+            </div>
+            
+            <div class="overflow-x-auto text-xs">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="border-b border-slate-100 text-slate-400 font-semibold bg-slate-50/50">
+                            <th class="py-2.5 px-3">তারিখ ও সময়</th>
+                            <th class="py-2.5 px-3">অংশীদার/মেম্বার</th>
+                            <th class="py-2.5 px-3">উৎস (ঋণগ্রহীতা)</th>
+                            <th class="py-2.5 px-3 text-right">প্রাপ্ত লভ্যাংশ</th>
+                        </tr>
+                    </thead>
+                    <tbody id="profitTableBody" class="text-slate-600 divide-y divide-slate-50">
+                        <tr><td colspan="4" class="py-6 text-center text-slate-400">লাভ বন্টনের ডেটা লোড হচ্ছে...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
     </main>
 
     <!-- লোন আপডেট ও ডিটেইলস মোডাল -->
@@ -227,22 +279,18 @@
                     <div class="text-slate-500" id="modalAddress">ঠিকানা: </div>
                 </div>
 
-                <!-- ⚡ মডিফাইড শো/হাইড পার্টনার সেকশন -->
                 <div class="bg-indigo-50/40 p-3 rounded-xl border border-indigo-100 space-y-2">
                     <div class="flex justify-between items-center">
                         <span class="text-[10px] font-bold text-indigo-950 uppercase tracking-wide">
                             <i class="fa-solid fa-users text-indigo-600"></i> অর্থায়নে নির্দিষ্ট অংশীদারসমূহ:
                         </span>
-                        <!-- শো / হাইড করার বাটন -->
                         <button onclick="toggleInvestorBox()" id="toggleBoxBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-[9px] px-2 py-1 rounded-md transition shadow-sm flex items-center gap-1">
                             <i id="toggleBoxIcon" class="fa-solid fa-eye"></i> <span id="toggleBoxText">তালিকা দেখুন</span>
                         </button>
                     </div>
                     
-                    <!-- এটি ডিফল্টভাবে hidden থাকবে -->
                     <div id="investorWrapperBox" class="hidden transition-all duration-300">
                         <div id="modalInvestorList" class="max-h-28 overflow-y-auto space-y-1 p-2 bg-white border border-slate-200 rounded-lg text-[11px] font-medium text-slate-700 shadow-inner">
-                            <!-- জাভাস্ক্রিপ্ট দিয়ে এখানে নাম লোড হবে -->
                         </div>
                     </div>
                 </div>
@@ -286,7 +334,7 @@
 
     <script type="module">
         import { db } from "./firebase-config.js";
-        import { collection, addDoc, onSnapshot, doc, updateDoc, runTransaction, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { collection, addDoc, onSnapshot, doc, updateDoc, runTransaction, getDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         document.getElementById('loanIssueDate').value = new Date().toISOString().slice(0, 10);
         let selectedLoanId = null;
@@ -295,11 +343,12 @@
         let filteredLoansArray = []; 
         let activeFilteredReport = [];
         let globalInvestorsMap = {};
+        let masterProfitsArray = []; 
 
         let currentViewMode = 'active'; 
-
         let currentPage = 1;
         const rowsPerPage = 10;
+        let cachedUsersNames = {}; 
 
         const loadApprovedInvestors = () => {
             const container = document.getElementById('investorListContainer');
@@ -307,6 +356,7 @@
             
             onSnapshot(usersRef, (snapshot) => {
                 container.innerHTML = "";
+                cachedUsersNames = {}; 
                 if(snapshot.empty) {
                     container.innerHTML = `<span class="text-rose-500 p-2 col-span-2">কোনো সদস্য ডাটাবেজে পাওয়া যায়নি।</span>`;
                     return;
@@ -319,6 +369,8 @@
                     const userName = userData.name || "অজানা সদস্য";
                     const userPhone = userData.phone || "";
                     
+                    cachedUsersNames[userId] = userName; 
+
                     if (userData.status === "approved" || userData.role === "customer" || !userData.role) {
                         hasApprovedMembers = true;
                         container.innerHTML += `
@@ -333,6 +385,8 @@
                 if(!hasApprovedMembers) {
                     container.innerHTML = `<span class="text-amber-600 p-2 col-span-2">কোনো একটিভ বা অনুমোদিত গ্রাহক তালিকা পাওয়া যায়নি।</span>`;
                 }
+                
+                renderProfitTable();
             });
         };
         
@@ -342,10 +396,12 @@
             document.getElementById('issue-section').classList.add('hidden');
             document.getElementById('history-section').classList.add('hidden');
             document.getElementById('report-section').classList.add('hidden');
+            document.getElementById('profit-share-section').classList.add('hidden');
             
             document.getElementById('box-issue').classList.remove('border-2', 'border-rose-500', 'shadow-md');
             document.getElementById('box-history').classList.remove('border-2', 'border-indigo-500', 'shadow-md');
             document.getElementById('box-report').classList.remove('border-2', 'border-emerald-500', 'shadow-md');
+            document.getElementById('box-profit-share').classList.remove('border-2', 'border-amber-500', 'shadow-md');
             
             document.getElementById(sectionId).classList.remove('hidden');
             
@@ -353,9 +409,87 @@
                 document.getElementById('box-issue').classList.add('border-2', 'border-rose-500', 'shadow-md');
             } else if(sectionId === 'history-section') {
                 document.getElementById('box-history').classList.add('border-2', 'border-indigo-500', 'shadow-md');
-            } else {
+            } else if(sectionId === 'report-section') {
                 document.getElementById('box-report').classList.add('border-2', 'border-emerald-500', 'shadow-md');
+            } else {
+                document.getElementById('box-profit-share').classList.add('border-2', 'border-amber-500', 'shadow-md');
             }
+        };
+
+        const profitQuery = query(collection(db, "profits"), orderBy("date", "desc"));
+        onSnapshot(profitQuery, (snapshot) => {
+            masterProfitsArray = [];
+            snapshot.forEach((pDoc) => {
+                const data = pDoc.data();
+                masterProfitsArray.push({
+                    id: pDoc.id,
+                    userId: data.userId || "",
+                    amount: parseFloat(data.amount || 0),
+                    borrowerName: data.borrowerName || "অজানা",
+                    date: data.date ? data.date.toDate() : new Date()
+                });
+            });
+            renderProfitTable();
+        });
+
+        // লাভ বন্টন রিপোর্ট: নাম + ফ্রম/টু ডেট ফিল্টার লজিক
+        const renderProfitTable = () => {
+            const tbody = document.getElementById('profitTableBody');
+            if(!tbody) return;
+            tbody.innerHTML = "";
+
+            const searchInput = document.getElementById('searchProfit').value.toUpperCase().trim();
+            const startDateVal = document.getElementById('profitStartDate').value; // YYYY-MM-DD
+            const endDateVal = document.getElementById('profitEndDate').value;     // YYYY-MM-DD
+
+            let filtered = [...masterProfitsArray];
+
+            // ১. টেক্সট সার্চ ফিল্টার (মেম্বার বা গ্রাহকের নাম)
+            if (searchInput !== "") {
+                filtered = filtered.filter(p => {
+                    const mName = (cachedUsersNames[p.userId] || "অজানা মেম্বার").toUpperCase();
+                    return mName.includes(searchInput) || p.borrowerName.toUpperCase().includes(searchInput);
+                });
+            }
+
+            // ২. ডেট রেঞ্জ ফিল্টার (ফ্রম ডেট - টু ডেট)
+            if (startDateVal || endDateVal) {
+                filtered = filtered.filter(p => {
+                    // Firestore Date অবজেক্ট থেকে YYYY-MM-DD ফরম্যাট তৈরি
+                    const pDateStr = p.date.toISOString().slice(0, 10);
+                    
+                    if (startDateVal && endDateVal) {
+                        return pDateStr >= startDateVal && pDateStr <= endDateVal;
+                    } else if (startDateVal) {
+                        return pDateStr >= startDateVal;
+                    } else if (endDateVal) {
+                        return pDateStr <= endDateVal;
+                    }
+                    return true;
+                });
+            }
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" class="py-6 text-center text-slate-400">ফিল্টার অনুযায়ী কোনো লাভ বন্টনের রেকর্ড পাওয়া যায়নি।</td></tr>`;
+                return;
+            }
+
+            filtered.forEach((p) => {
+                const memberName = cachedUsersNames[p.userId] || "অজানা মেম্বার";
+                const formattedDate = p.date.toLocaleString('bn-BD', { hour12:true });
+                tbody.innerHTML += `
+                    <tr class="border-b border-slate-50 hover:bg-slate-50 transition">
+                        <td class="py-2.5 px-3 text-slate-500 text-[11px]">${formattedDate}</td>
+                        <td class="py-2.5 px-3 font-bold text-slate-800">${memberName}</td>
+                        <td class="py-2.5 px-3 text-slate-600 font-medium"><span class="text-[10px] bg-indigo-50 text-indigo-600 px-1.5 py-0.5 rounded mr-1">লোন</span>${p.borrowerName}</td>
+                        <td class="py-2.5 px-3 text-right font-bold text-emerald-600">+ ৳${p.amount.toFixed(2)}</td>
+                    </tr>
+                `;
+            });
+        };
+
+        window.filterProfitTable = () => {
+            renderProfitTable();
         };
 
         window.issueNewLoan = async (event) => {
@@ -498,7 +632,6 @@
 
             const startIndex = (currentPage - 1) * rowsPerPage;
             const endIndex = Math.min(startIndex + rowsPerPage, filteredLoansArray.length);
-            
             const paginatedItems = filteredLoansArray.slice(startIndex, endIndex);
 
             paginatedItems.forEach((loan) => {
@@ -639,7 +772,6 @@
             }
         };
 
-        // ⚡ শো/হাইড টগল ফাংশন
         window.toggleInvestorBox = () => {
             const box = document.getElementById('investorWrapperBox');
             const btnText = document.getElementById('toggleBoxText');
@@ -667,7 +799,6 @@
             document.getElementById('payPrincipal').value = "";
             document.getElementById('payProfit').value = "";
             
-            // মোডাল ওপেন হলে টগল বক্স যেন ডিফল্টভাবে লুকানো (hidden) থাকে
             document.getElementById('investorWrapperBox').classList.add('hidden');
             document.getElementById('toggleBoxText').innerText = "তালিকা দেখুন";
             document.getElementById('toggleBoxIcon').className = "fa-solid fa-eye";
@@ -793,19 +924,17 @@
                             
                             const myProfitShare = (myDeposit / totalInvestorsCapital) * payProfit;
                             
-                            // ১. ইনভেস্টরের মূল ওয়ালেটের ব্যালেন্স আপডেট
                             transaction.update(item.ref, {
                                 totalProfitShare: currentInvestorProfit + myProfitShare
                             });
 
-                            // ২. কাস্টমার অ্যাপের ট্র্যাকিংয়ের জন্য "profits" কালেকশনে নতুন ডকুমেন্ট তৈরি (এন্ট্রি পুশ)
                             const newProfitDocRef = doc(profitsCollectionRef);
                             transaction.set(newProfitDocRef, {
                                 userId: item.ref.id,
                                 amount: myProfitShare,
                                 loanId: selectedLoanId,
                                 borrowerName: loanData.userName || loanData.memberName || "অজানা",
-                                date: new Date() // রিয়েল-টাইম ট্র্যাকিংয়ের জন্য বর্তমান তারিখ অবজেক্ট
+                                date: new Date()
                             });
                         }
                     }
@@ -821,4 +950,4 @@
         };
     </script>
 </body>
-</html>
+                        </html>
