@@ -7,7 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- চোখ আইকনের জন্য Font Awesome সিডিএন যুক্ত করা হলো -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Hind_Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>body { font-family: 'Hind Siliguri', sans-serif; }</style>
 </head>
 <body class="bg-slate-950 min-h-screen flex items-center justify-center p-4">
@@ -91,10 +91,12 @@
                             btn.innerText = "লগইন করুন";
                         }
                     } else {
-                        window.location.href = 'customer.html';
+                        // যদি ফায়ারস্টোরে ইউজার ডকুমেন্ট না থাকে, তবে সরাসরি admin.html-এ যাবে
+                        window.location.href = 'admin.html';
                     }
                 } catch (firestoreErr) {
-                    window.location.href = 'customer.html';
+                    // ফায়ারস্টোর রিড করতে কোনো এরর হলে সরাসরি admin.html-এ যাবে
+                    window.location.href = 'admin.html';
                 }
 
             } catch (err) { 
