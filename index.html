@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>লগইন</title>
+    <!-- PWA Manifest Link যুক্ত করা হলো -->
+    <link rel="manifest" href="manifest.json">
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- চোখ আইকনের জন্য Font Awesome সিডিএন যুক্ত করা হলো -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -40,6 +42,15 @@
         import { auth, db } from "./firebase-config.js";
         import { signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // PWA সার্ভিস ওয়ার্কার রেজিস্ট্রেশন লজিক
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(reg => console.log('Service Worker Registered!', reg))
+                    .catch(err => console.error('Service Worker Registration Failed!', err));
+            });
+        }
 
         // পাসওয়ার্ড দেখানো এবং লুকানোর গ্লোবাল ফাংশন
         window.togglePasswordVisibility = () => {
