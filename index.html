@@ -3,179 +3,110 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>লগইন | রেজিস্ট্রেশন</title>
-    <!-- PWA Manifest Link -->
-    <link rel="manifest" href="manifest.json">
+    <title>লগইন</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font Awesome Icon for Eye Toggle -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght=400;500;600;700&display=swap" rel="stylesheet">
+    <!-- চোখ আইকনের জন্য Font Awesome সিডিএন যুক্ত করা হলো -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>body { font-family: 'Hind Siliguri', sans-serif; }</style>
 </head>
 <body class="bg-slate-950 min-h-screen flex items-center justify-center p-4">
 
     <div class="bg-white w-full max-w-sm p-8 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.3)]">
         
-        <!-- লগইন সেকশন -->
         <div id="loginSection">
             <h2 class="text-2xl font-bold mb-1 text-slate-800">স্বাগতম! 👋</h2>
             <p class="text-slate-400 text-sm mb-6">আপনার অ্যাকাউন্টে লগইন করুন</p>
             <form id="loginForm" class="space-y-4">
-                <input type="email" id="lEmail" placeholder="ইমেইল অ্যাড্রেস" class="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:border-indigo-500" required>
-                
-                <!-- শো/হাইড পাসওয়ার্ডসহ লগইন পাসওয়ার্ড ইনপুট -->
-                <div class="relative">
-                    <input type="password" id="lPass" placeholder="পাসওয়ার্ড" class="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:border-indigo-500 pr-10" required>
-                    <button type="button" onclick="togglePasswordVisibility('lPass', 'loginEyeIcon')" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 focus:outline-none">
-                        <i id="loginEyeIcon" class="fa-solid fa-eye"></i>
-                    </button>
+                <div>
+                    <input type="email" id="lEmail" placeholder="ইমেইল অ্যাড্রেস" class="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:border-indigo-500" required>
                 </div>
                 
-                <button type="submit" class="w-full bg-indigo-600 text-white font-bold py-3 rounded-2xl hover:bg-indigo-700 transition">লগইন করুন</button>
-            </form>
-            <div class="mt-6 text-center">
-                <button onclick="showSection('registerSection')" class="text-indigo-600 font-semibold text-sm">নতুন অ্যাকাউন্ট খুলুন</button>
-                <button onclick="showSection('resetSection')" class="block mt-2 text-slate-400 text-xs">পাসওয়ার্ড ভুলে গেছেন?</button>
-            </div>
-        </div>
-
-        <!-- রেজিস্ট্রেশন সেকশন -->
-        <div id="registerSection" class="hidden">
-            <h2 class="text-2xl font-bold mb-6 text-slate-800">রেজিস্ট্রেশন</h2>
-            <form id="regForm" class="space-y-4">
-                <input type="text" id="rName" placeholder="পুরো নাম" class="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:border-emerald-500" required>
-                <input type="email" id="rEmail" placeholder="ইমেইল" class="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:border-emerald-500" required>
-                
-                <!-- শো/হাইড পাসওয়ার্ডসহ রেজিস্ট্রেশন পাসওয়ার্ড ইনপুট -->
+                <!-- পাসওয়ার্ড এবং চোখ আইকন সেকশন -->
                 <div class="relative">
-                    <input type="password" id="rPass" placeholder="পাসওয়ার্ড" class="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:border-emerald-500 pr-10" required>
-                    <button type="button" onclick="togglePasswordVisibility('rPass', 'regEyeIcon')" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 focus:outline-none">
-                        <i id="regEyeIcon" class="fa-solid fa-eye"></i>
+                    <input type="password" id="lPass" placeholder="পাসওয়ার্ড" class="w-full px-4 pr-12 py-3 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:border-indigo-500" required>
+                    <button type="button" onclick="togglePasswordVisibility()" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-indigo-600 focus:outline-none text-sm">
+                        <i id="passwordToggleIcon" class="fa-solid fa-eye-slash"></i>
                     </button>
                 </div>
-                
-                <button type="submit" class="w-full bg-emerald-600 text-white font-bold py-3 rounded-2xl hover:bg-emerald-700 transition">নিশ্চিত করুন</button>
+
+                <button type="submit" id="loginBtn" class="w-full bg-indigo-600 text-white font-bold py-3 rounded-2xl hover:bg-indigo-700 transition">লগইন করুন</button>
             </form>
-            <button onclick="showSection('loginSection')" class="w-full mt-6 text-sm text-slate-400">লগইন পেজে ফিরে যান</button>
         </div>
 
-        <!-- পাসওয়ার্ড রিসেট সেকশন -->
-        <div id="resetSection" class="hidden">
-            <h2 class="text-2xl font-bold mb-1 text-slate-800">পাসওয়ার্ড রিসেট</h2>
-            <form id="resetForm" class="space-y-4">
-                <input type="email" id="reEmail" placeholder="আপনার রেজিস্টার্ড ইমেইল" class="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:border-rose-500" required>
-                <button type="submit" class="w-full bg-rose-500 text-white font-bold py-3 rounded-2xl hover:bg-rose-600 transition">লিঙ্ক পাঠান</button>
-            </form>
-            <button onclick="showSection('loginSection')" class="w-full mt-6 text-sm text-slate-400">লগইন পেজে ফিরে যান</button>
-        </div>
     </div>
 
     <script type="module">
         import { auth, db } from "./firebase-config.js";
-        import { signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // সেকশন পরিবর্তন করার ফাংশন
-        window.showSection = (id) => {
-            document.getElementById('loginSection').classList.add('hidden');
-            document.getElementById('registerSection').classList.add('hidden');
-            document.getElementById('resetSection').classList.add('hidden');
-            document.getElementById(id).classList.remove('hidden');
-        };
-
-        // পাসওয়ার্ড শো/হাইড করার গ্লোবাল ফাংশন
-        window.togglePasswordVisibility = (inputId, iconId) => {
-            const passwordInput = document.getElementById(inputId);
-            const eyeIcon = document.getElementById(iconId);
+        // পাসওয়ার্ড দেখানো এবং লুকানোর গ্লোবাল ফাংশন
+        window.togglePasswordVisibility = () => {
+            const passwordInput = document.getElementById('lPass');
+            const toggleIcon = document.getElementById('passwordToggleIcon');
             
             if (passwordInput.type === 'password') {
                 passwordInput.type = 'text';
-                eyeIcon.classList.remove('fa-eye');
-                eyeIcon.classList.add('fa-eye-slash');
+                toggleIcon.classList.remove('fa-eye-slash');
+                toggleIcon.classList.add('fa-eye');
             } else {
                 passwordInput.type = 'password';
-                eyeIcon.classList.remove('fa-eye-slash');
-                eyeIcon.classList.add('fa-eye');
+                toggleIcon.classList.remove('fa-eye');
+                toggleIcon.classList.add('fa-eye-slash');
             }
         };
 
-        // ১. নতুন মেম্বার রেজিস্ট্রেশন লজিক
-        document.getElementById('regForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const name = document.getElementById('rName').value.trim();
-            const email = document.getElementById('rEmail').value.trim();
-            const password = document.getElementById('rPass').value;
-            try {
-                const cred = await createUserWithEmailAndPassword(auth, email, password);
-                await setDoc(doc(db, "users", cred.user.uid), { 
-                    name: name, 
-                    email: email, 
-                    role: "customer", 
-                    status: "pending", 
-                    totalDeposit: 0,
-                    totalProfitShare: 0
-                });
-                alert("সফলভাবে রেজিস্ট্রেশন সম্পন্ন! অ্যাডমিন অনুমোদন করলে আপনি ঢুকতে পারবেন।");
-                window.location.reload();
-            } catch (err) { alert("রেজিস্ট্রেশন ব্যর্থ: " + err.message); }
-        });
-
-        // ২. লগইন লজিক
+        // লগইন লজিক
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = document.getElementById('lEmail').value.trim();
             const password = document.getElementById('lPass').value;
+            const btn = document.getElementById('loginBtn');
+            
+            btn.disabled = true;
+            btn.innerText = "লগইন হচ্ছে...";
             
             try {
+                // ১. ফায়ারবেস অথেন্টিকেশন চেক
                 const cred = await signInWithEmailAndPassword(auth, email, password);
                 const user = cred.user;
                 
+                // ২. ফায়ারস্টোর ডাটাবেজ ভেরিফিকেশন
                 try {
                     const userDoc = await getDoc(doc(db, "users", user.uid));
                     
                     if (userDoc.exists()) {
                         const userData = userDoc.data();
                         
+                        // রোল ও স্ট্যাটাস অনুযায়ী রিডাইরেক্ট করা
                         if (userData.role === 'admin') {
                             window.location.href = 'admin.html';
                         } else if (userData.status === 'approved') {
                             window.location.href = 'customer.html';
                         } else {
-                            alert("আপনার অ্যাকাউন্টটি এখনো অনুমোদিত হয়নি। অনুগ্রহ করে অ্যাডমিনের অনুমোদনের জন্য অপেক্ষা করুন।");
+                            await signOut(auth);
+                            alert("আপনার অ্যাকাউন্টটি এখনও অনুমোদিত হয়নি। অনুগ্রহ করে অ্যাডমিনের অনুমোদনের জন্য অপেক্ষা করুন।");
+                            btn.disabled = false;
+                            btn.innerText = "লগইন করুন";
                         }
                     } else {
-                        console.log("ডাটাবেজে কোনো রেকর্ড মিলল না। ফলব্যাক রিডাইরেক্ট একটিভ।");
                         window.location.href = 'customer.html';
                     }
                 } catch (firestoreErr) {
-                    console.log("ফায়ারস্টোর এরর এড়ানো হয়েছে। রিডাইরেক্টিং...", firestoreErr.message);
                     window.location.href = 'customer.html';
                 }
 
             } catch (err) { 
-                alert("লগইন ভুল: " + err.message); 
+                btn.disabled = false;
+                btn.innerText = "লগইন করুন";
+                if (err.code === 'auth/invalid-credential' || err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password') {
+                    alert("ভুল ইমেইল অথবা পাসওয়ার্ড দিয়েছেন। আবার চেষ্টা করুন।");
+                } else {
+                    alert("লগইন ব্যর্থ: " + err.message); 
+                }
             }
         });
-
-        // ৩. পাসওয়ার্ড রিসেট লজিক
-        document.getElementById('resetForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('reEmail').value.trim();
-            try {
-                await sendPasswordResetEmail(auth, email);
-                alert("পাসওয়ার্ড রিসেট করার লিঙ্কটি আপনার ইমেইলে পাঠানো হয়েছে!");
-                showSection('loginSection');
-            } catch (err) { alert("রিসেট ব্যর্থ: " + err.message); }
-        });
-
-        // ================= PWA Service Worker Registration Line =================
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js')
-                    .then(reg => console.log('Index PWA Service Worker Registered Successfully!', reg))
-                    .catch(err => console.error('Service Worker Registration Failed:', err));
-            });
-        }
     </script>
 </body>
 </html>
